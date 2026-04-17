@@ -42,7 +42,7 @@ export const Route = createRootRoute({
           "Interactive reference for PCI DSS v4.0.1 Self-Assessment Questionnaire applicability. Decision tree, knowledge fragments, SAQ comparison, glossary.",
       },
       { name: "author", content: "SAQ Atlas" },
-      { property: "og:title", content: "SAQ Atlas — PCI DSS SAQ Applicability" },
+      { property: "og:title", content: "SAQ Atlas — PCI DSS v4.0.1 SAQ Applicability Knowledge Base" },
       {
         property: "og:description",
         content:
@@ -50,6 +50,12 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "twitter:title", content: "SAQ Atlas — PCI DSS v4.0.1 SAQ Applicability Knowledge Base" },
+      { name: "description", content: "Insight Canvas is an interactive knowledge canvas for browsing and exploring structured information." },
+      { property: "og:description", content: "Insight Canvas is an interactive knowledge canvas for browsing and exploring structured information." },
+      { name: "twitter:description", content: "Insight Canvas is an interactive knowledge canvas for browsing and exploring structured information." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b23ab391-ab8e-41db-8a74-e87482b05379/id-preview-3a2b6e6c--d4e4537a-15d2-461e-bd09-51b8597dd8a5.lovable.app-1776431289634.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/b23ab391-ab8e-41db-8a74-e87482b05379/id-preview-3a2b6e6c--d4e4537a-15d2-461e-bd09-51b8597dd8a5.lovable.app-1776431289634.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
