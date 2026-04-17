@@ -382,6 +382,3 @@ function DecisionPage() {
   );
 }
 
-// silence unused warnings on imports we may not reference
-void cn;
-void sourcesById;
