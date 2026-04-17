@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SaqTypesRouteImport } from './routes/saq-types'
+import { Route as ReferenceRouteImport } from './routes/reference'
+import { Route as KnowledgeRouteImport } from './routes/knowledge'
+import { Route as GlossaryRouteImport } from './routes/glossary'
+import { Route as DecisionRouteImport } from './routes/decision'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SaqTypesRoute = SaqTypesRouteImport.update({
+  id: '/saq-types',
+  path: '/saq-types',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReferenceRoute = ReferenceRouteImport.update({
+  id: '/reference',
+  path: '/reference',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KnowledgeRoute = KnowledgeRouteImport.update({
+  id: '/knowledge',
+  path: '/knowledge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GlossaryRoute = GlossaryRouteImport.update({
+  id: '/glossary',
+  path: '/glossary',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DecisionRoute = DecisionRouteImport.update({
+  id: '/decision',
+  path: '/decision',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,102 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/decision': typeof DecisionRoute
+  '/glossary': typeof GlossaryRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/reference': typeof ReferenceRoute
+  '/saq-types': typeof SaqTypesRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/decision': typeof DecisionRoute
+  '/glossary': typeof GlossaryRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/reference': typeof ReferenceRoute
+  '/saq-types': typeof SaqTypesRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/decision': typeof DecisionRoute
+  '/glossary': typeof GlossaryRoute
+  '/knowledge': typeof KnowledgeRoute
+  '/reference': typeof ReferenceRoute
+  '/saq-types': typeof SaqTypesRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/decision'
+    | '/glossary'
+    | '/knowledge'
+    | '/reference'
+    | '/saq-types'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/decision'
+    | '/glossary'
+    | '/knowledge'
+    | '/reference'
+    | '/saq-types'
+  id:
+    | '__root__'
+    | '/'
+    | '/decision'
+    | '/glossary'
+    | '/knowledge'
+    | '/reference'
+    | '/saq-types'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DecisionRoute: typeof DecisionRoute
+  GlossaryRoute: typeof GlossaryRoute
+  KnowledgeRoute: typeof KnowledgeRoute
+  ReferenceRoute: typeof ReferenceRoute
+  SaqTypesRoute: typeof SaqTypesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/saq-types': {
+      id: '/saq-types'
+      path: '/saq-types'
+      fullPath: '/saq-types'
+      preLoaderRoute: typeof SaqTypesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reference': {
+      id: '/reference'
+      path: '/reference'
+      fullPath: '/reference'
+      preLoaderRoute: typeof ReferenceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knowledge': {
+      id: '/knowledge'
+      path: '/knowledge'
+      fullPath: '/knowledge'
+      preLoaderRoute: typeof KnowledgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/glossary': {
+      id: '/glossary'
+      path: '/glossary'
+      fullPath: '/glossary'
+      preLoaderRoute: typeof GlossaryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/decision': {
+      id: '/decision'
+      path: '/decision'
+      fullPath: '/decision'
+      preLoaderRoute: typeof DecisionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +157,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DecisionRoute: DecisionRoute,
+  GlossaryRoute: GlossaryRoute,
+  KnowledgeRoute: KnowledgeRoute,
+  ReferenceRoute: ReferenceRoute,
+  SaqTypesRoute: SaqTypesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
