@@ -17,7 +17,6 @@ import {
   fragmentsById,
   sourcesById,
   type DecisionStep,
-  type DecisionOutcome,
 } from "@/data/saq-knowledge";
 import { FragmentCard } from "@/components/FragmentCard";
 import { cn } from "@/lib/utils";
@@ -386,4 +385,3 @@ function DecisionPage() {
 // silence unused warnings on imports we may not reference
 void cn;
 void sourcesById;
-void DecisionOutcome;
