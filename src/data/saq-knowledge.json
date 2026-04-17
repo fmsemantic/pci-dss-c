@@ -1,0 +1,983 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "title": "PCI DSS SAQ Applicability for E-Commerce Merchants",
+    "standard_version": "PCI DSS v4.0.1",
+    "effective_date": "2025-03-31",
+    "last_updated": "2026-04-17",
+    "language": "en",
+    "content_model": "semantic_axis_framework",
+    "axes": ["truth", "deep", "connect", "service", "knowledge", "evolution", "responsibility"],
+    "sources": {
+      "primary": [
+        {
+          "id": "pci-dss-v4.0.1",
+          "title": "PCI DSS v4.0.1",
+          "publisher": "PCI Security Standards Council",
+          "url": "https://listings.pcisecuritystandards.org/documents/PCI-DSS-v4_0_1.pdf"
+        },
+        {
+          "id": "saq-instructions",
+          "title": "SAQ Instructions and Guidelines for PCI DSS v4.0.1",
+          "publisher": "PCI Security Standards Council",
+          "url": "https://www.pcisecuritystandards.org/document_library/"
+        },
+        {
+          "id": "faq-1588",
+          "title": "FAQ 1588: SAQ A Eligibility Criteria for E-Commerce Merchants",
+          "publisher": "PCI Security Standards Council",
+          "date": "2025-02-28",
+          "url": "https://blog.pcisecuritystandards.org/faq-clarifies-new-saq-a-eligibility-criteria-for-e-commerce-merchants"
+        },
+        {
+          "id": "saq-a-v4.0.1-r1",
+          "title": "SAQ A v4.0.1 r1 (January 2025)",
+          "publisher": "PCI Security Standards Council",
+          "effective_from": "2025-03-31"
+        },
+        {
+          "id": "visa-core-rules",
+          "title": "Visa Core Rules and Visa Product and Service Rules",
+          "publisher": "Visa Inc."
+        },
+        {
+          "id": "mastercard-sdp",
+          "title": "Mastercard Site Data Protection Program",
+          "publisher": "Mastercard",
+          "url": "https://www.mastercard.com/us/en/business/cybersecurity-fraud-prevention/site-data-protection-pci.html"
+        },
+        {
+          "id": "mastercard-spme",
+          "title": "Mastercard Security Rules and Procedures — Merchant Edition",
+          "publisher": "Mastercard",
+          "date": "2025-02-11"
+        }
+      ]
+    }
+  },
+
+  "glossary": {
+    "CHD": {
+      "term": "Cardholder Data",
+      "definition": "At minimum, the full PAN. May also include cardholder name, expiration date, and service code when stored with the full PAN.",
+      "ref": "PCI DSS v4.0.1, Glossary"
+    },
+    "SAD": {
+      "term": "Sensitive Authentication Data",
+      "definition": "Security-related information used to authenticate cardholders and/or authorize payment card transactions: full track data, card verification codes (CVV2/CVC2), PINs and PIN blocks.",
+      "ref": "PCI DSS v4.0.1, Glossary"
+    },
+    "CDE": {
+      "term": "Cardholder Data Environment",
+      "definition": "The people, processes, and technology that store, process, or transmit CHD and/or SAD, and system components that may not directly handle such data but could impact the security of the CDE.",
+      "ref": "PCI DSS v4.0.1, Glossary; Section 4 (Scope)"
+    },
+    "SAQ": {
+      "term": "Self-Assessment Questionnaire",
+      "definition": "A validation tool for SAQ-eligible merchants and service providers to self-assess and report their PCI DSS compliance. Consists of yes/no questions mapped to PCI DSS requirements.",
+      "ref": "SAQ Instructions and Guidelines, PCI DSS v4.0.1"
+    },
+    "ROC": {
+      "term": "Report on Compliance",
+      "definition": "A detailed compliance report produced by a QSA or ISA following an on-site PCI DSS assessment. Required for Level 1 merchants.",
+      "ref": "PCI DSS v4.0.1, ROC Template"
+    },
+    "AOC": {
+      "term": "Attestation of Compliance",
+      "definition": "A formal declaration signed by the assessed entity and (where applicable) the QSA, attesting to the results of a PCI DSS assessment. Accompanies both SAQ and ROC submissions.",
+      "ref": "PCI DSS v4.0.1"
+    },
+    "TPSP": {
+      "term": "Third-Party Service Provider",
+      "definition": "A business entity not a payment brand, directly involved in processing, storage, or transmission of CHD on behalf of another entity, or providing services that could impact the security of CHD.",
+      "ref": "PCI DSS v4.0.1, Glossary"
+    },
+    "QSA": {
+      "term": "Qualified Security Assessor",
+      "definition": "An entity qualified by PCI SSC to perform on-site PCI DSS assessments and validate compliance.",
+      "ref": "PCI SSC QSA Qualification Requirements"
+    },
+    "ISA": {
+      "term": "Internal Security Assessor",
+      "definition": "An individual certified by PCI SSC to conduct internal PCI DSS assessments for their own organization.",
+      "ref": "PCI SSC ISA Program Guide"
+    },
+    "ASV": {
+      "term": "Approved Scanning Vendor",
+      "definition": "A company approved by PCI SSC to perform external vulnerability scans of internet-facing environments.",
+      "ref": "PCI DSS v4.0.1, Requirement 11.3.2"
+    },
+    "P2PE": {
+      "term": "Point-to-Point Encryption",
+      "definition": "A PCI SSC-validated solution that encrypts cardholder data at the point of interaction and does not decrypt until within the secure decryption environment of the solution provider.",
+      "ref": "PCI P2PE Standard"
+    },
+    "CEE": {
+      "term": "Compliance Enforcing Entity",
+      "definition": "The organization responsible for enforcing PCI DSS compliance — typically the acquirer for merchants and the payment brand for service providers.",
+      "ref": "PCI DSS v4.0.1"
+    }
+  },
+
+  "content_fragments": {
+    "truth": {
+      "axis_label": "Foundational definitions",
+      "axis_purpose": "Anchor points and essential definitions required to reason about SAQ applicability",
+      "fragments": [
+        {
+          "id": "truth-01",
+          "title": "What is an SAQ and how does it differ from a ROC?",
+          "body": "An SAQ is a self-assessment validation tool consisting of yes/no questions mapped to applicable PCI DSS requirements. The merchant answers each question, and any control marked 'Not in Place' requires a documented remediation plan with target dates. A ROC is a detailed report produced by an external QSA or certified ISA following a comprehensive on-site assessment. Both culminate in a signed AOC. The key distinction: SAQ is self-reported; ROC is independently verified.",
+          "refs": ["saq-instructions", "pci-dss-v4.0.1"],
+          "citations": [
+            {
+              "text": "SAQs are validation tools intended to assist SAQ-eligible merchants and service providers in performing and reporting the results of their PCI DSS self-assessment.",
+              "source": "pci-dss-v4.0.1",
+              "section": "SAQ Instructions and Guidelines"
+            }
+          ],
+          "links_to": ["truth-06", "connect-01", "deep-07"]
+        },
+        {
+          "id": "truth-02",
+          "title": "Who qualifies as a merchant under PCI DSS?",
+          "body": "A merchant is any entity that accepts payment cards bearing the logos of PCI SSC Participating Payment Brands as payment for goods and/or services. This encompasses online retailers, brick-and-mortar stores, restaurants, subscription services, and any other business accepting card payments. Critically, an entity can simultaneously be a merchant AND a service provider — for example, an ISP that accepts cards for its own billing (merchant) while also hosting other merchants' websites (service provider).",
+          "refs": ["pci-dss-v4.0.1"],
+          "citations": [
+            {
+              "text": "For the purposes of the PCI DSS, a merchant is defined as any entity that accepts payment cards bearing the logos of any PCI SSC Participating Payment Brand as payment for goods and/or services.",
+              "source": "pci-dss-v4.0.1",
+              "section": "Glossary"
+            },
+            {
+              "text": "A merchant that accepts payment cards as payment for goods and/or services can also be a service provider, if the services sold result in storing, processing, or transmitting cardholder data on behalf of other merchants or service providers.",
+              "source": "pci-dss-v4.0.1",
+              "section": "Glossary"
+            }
+          ],
+          "links_to": ["truth-03", "connect-02"]
+        },
+        {
+          "id": "truth-03",
+          "title": "SAQ types and the key differentiating criteria",
+          "body": "PCI DSS v4.0.1 defines the following SAQ types for merchants: SAQ A (~24 requirements) for full outsourcing of all CHD functions; SAQ A-EP (~140 requirements) for e-commerce merchants outsourcing all processing except the data ingestion page; SAQ B for imprint-only or standalone dial-up terminals; SAQ B-IP for standalone PTS terminals with IP connectivity; SAQ C-VT for virtual terminal solutions on isolated devices; SAQ C for payment applications connected to the internet on isolated systems; SAQ P2PE for PCI-listed P2PE solutions; SAQ SPoC for validated Software-based PIN Entry on COTS; SAQ D for Merchants (~300+ requirements) as the catch-all. A separate SAQ D for Service Providers exists.",
+          "refs": ["saq-instructions", "pci-dss-v4.0.1"],
+          "saq_types": [
+            {
+              "type": "SAQ A",
+              "approximate_requirements": 24,
+              "channels": ["e-commerce", "MOTO"],
+              "summary": "All CHD functions fully outsourced to PCI DSS compliant TPSP. No electronic storage, processing, or transmission of CHD on merchant systems.",
+              "ref_section": "SAQ A Eligibility Criteria"
+            },
+            {
+              "type": "SAQ A-EP",
+              "approximate_requirements": 140,
+              "channels": ["e-commerce"],
+              "summary": "E-commerce merchants outsourcing all CHD processing to TPSP except the account data ingestion page. Merchant web server is in scope.",
+              "ref_section": "SAQ A-EP Eligibility Criteria"
+            },
+            {
+              "type": "SAQ B",
+              "approximate_requirements": 26,
+              "channels": ["card-present", "MOTO"],
+              "summary": "Imprint-only or standalone dial-up terminals. No electronic CHD storage. No internet connection for payment processing.",
+              "ref_section": "SAQ B Eligibility Criteria"
+            },
+            {
+              "type": "SAQ B-IP",
+              "approximate_requirements": 82,
+              "channels": ["card-present", "MOTO"],
+              "summary": "Standalone PTS-approved POI devices with IP connectivity to payment processor. No electronic CHD storage.",
+              "ref_section": "SAQ B-IP Eligibility Criteria"
+            },
+            {
+              "type": "SAQ C-VT",
+              "approximate_requirements": 79,
+              "channels": ["card-present", "MOTO"],
+              "summary": "Virtual terminal solutions hosted by PCI DSS validated TPSP, accessed via isolated computing device. Manual single-transaction entry.",
+              "ref_section": "SAQ C-VT Eligibility Criteria"
+            },
+            {
+              "type": "SAQ C",
+              "approximate_requirements": 160,
+              "channels": ["card-present", "MOTO", "e-commerce"],
+              "summary": "Payment application system on internet-connected device, not connected to other merchant systems. No electronic CHD storage.",
+              "ref_section": "SAQ C Eligibility Criteria"
+            },
+            {
+              "type": "SAQ P2PE",
+              "approximate_requirements": 33,
+              "channels": ["card-present"],
+              "summary": "Payment terminals managed through a PCI SSC-listed P2PE solution only. No electronic CHD storage.",
+              "ref_section": "SAQ P2PE Eligibility Criteria"
+            },
+            {
+              "type": "SAQ SPoC",
+              "approximate_requirements": 35,
+              "channels": ["card-present"],
+              "summary": "COTS mobile device with secure card reader as part of a validated SPoC Solution listed by PCI SSC.",
+              "ref_section": "SAQ SPoC Eligibility Criteria"
+            },
+            {
+              "type": "SAQ D (Merchants)",
+              "approximate_requirements": 300,
+              "channels": ["all"],
+              "summary": "Catch-all for merchants not meeting criteria for any other SAQ type. Includes merchants with electronic CHD storage, own payment pages, or additional PCI DSS requirements beyond other SAQ scopes.",
+              "ref_section": "SAQ D for Merchants Eligibility Criteria"
+            }
+          ],
+          "links_to": ["truth-04", "truth-05", "deep-01"]
+        },
+        {
+          "id": "truth-04",
+          "title": "Payment channels and why they determine SAQ type",
+          "body": "A payment channel is the method by which a merchant accepts a payment card. The primary channels are: card-present (CP) — physical card at a POS terminal; card-not-present (CNP) — subdivided into e-commerce (online payment via website or app) and MOTO (mail order / telephone order). Each channel creates a fundamentally different data flow architecture and attack surface. E-commerce is exposed to script-based attacks (formjacking, Magecart); MOTO faces operator-side risks; card-present faces physical skimming and terminal compromise. The SAQ is selected per channel — a merchant accepting cards both in-store and online evaluates each channel independently and may complete different SAQ types for each.",
+          "refs": ["pci-dss-v4.0.1", "saq-instructions"],
+          "citations": [
+            {
+              "text": "Merchants should confirm they meet all eligibility criteria for a particular SAQ before commencing their self-assessment.",
+              "source": "saq-instructions",
+              "section": "SAQ Instructions and Guidelines"
+            }
+          ],
+          "links_to": ["truth-03", "deep-01", "deep-02"]
+        },
+        {
+          "id": "truth-05",
+          "title": "The Cardholder Data Environment (CDE) and its impact on scope",
+          "body": "The CDE comprises all system components, people, and processes that store, process, or transmit CHD/SAD, plus 'connected-to' systems that could impact CDE security (DNS servers, routers, jump hosts providing access to CDE, etc.). The CDE boundary directly determines assessment scope: everything inside or connected to the CDE falls under PCI DSS requirements. The wider the CDE, the more requirements apply and the 'heavier' the SAQ. Network segmentation is the primary tool for narrowing the CDE. A common and consequential error is assuming SAQ A eligibility when the merchant's web server actually falls in scope — any JavaScript loaded from the merchant's domain that could affect the payment page places the web server in the CDE, escalating from ~24 (SAQ A) to ~140 requirements (SAQ A-EP).",
+          "refs": ["pci-dss-v4.0.1"],
+          "citations": [
+            {
+              "text": "The CDE is comprised of: the system components, people, and processes that store, process, or transmit cardholder data and/or sensitive authentication data, and system components that may not store, process, or transmit CHD/SAD but have unrestricted connectivity to system components that do.",
+              "source": "pci-dss-v4.0.1",
+              "section": "Section 4: Scope of PCI DSS Requirements"
+            }
+          ],
+          "links_to": ["deep-04", "deep-06", "knowledge-02"]
+        },
+        {
+          "id": "truth-06",
+          "title": "Who determines which SAQ a merchant must complete?",
+          "body": "SAQ selection is a multi-layered process. PCI SSC defines the SAQ types and their eligibility criteria. Payment brands (Visa, Mastercard, etc.) establish validation programs that overlay PCI SSC's framework, determining merchant levels by transaction volume and specifying additional validation requirements. The acquirer (acquiring bank or payment processor) serves as the de facto enforcement layer — it is the acquirer who ultimately accepts or rejects the merchant's chosen SAQ type. The merchant self-selects the lightest applicable SAQ but this choice is subject to acquirer approval. If the acquirer disagrees, it may require a stricter SAQ type or a full ROC.",
+          "refs": ["pci-dss-v4.0.1", "visa-core-rules", "mastercard-sdp"],
+          "citations": [
+            {
+              "text": "All entities completing SAQs are encouraged to first contact the entity to which the SAQ is to be submitted to confirm the correct SAQ and any applicable reporting requirements.",
+              "source": "saq-instructions",
+              "section": "SAQ Instructions and Guidelines"
+            },
+            {
+              "text": "Merchants should also check with their acquirer or relevant payment brands to confirm if SAQ A is the appropriate self-assessment questionnaire for their environment.",
+              "source": "faq-1588",
+              "section": "FAQ 1588"
+            }
+          ],
+          "links_to": ["connect-01", "connect-02", "responsibility-06"]
+        }
+      ]
+    },
+
+    "deep": {
+      "axis_label": "Applicability boundaries",
+      "axis_purpose": "Precise conditions that determine where one SAQ type ends and another begins",
+      "fragments": [
+        {
+          "id": "deep-01",
+          "title": "SAQ A vs. SAQ A-EP: the iframe/redirect boundary",
+          "body": "Under PCI DSS v4.0.1 SAQ A r1 (January 2025), the distinction between redirect and iframe integration is critical. A merchant using full redirect (customer leaves merchant site entirely) qualifies for SAQ A without the script-protection eligibility criterion. A merchant using iframe/embedded payment forms must additionally confirm that their entire site is not susceptible to script-based attacks — either by implementing protective techniques (CSP, SRI, script monitoring) or by obtaining confirmation from their PCI DSS compliant TPSP that the embedded solution includes such protections when implemented per the TPSP's instructions.",
+          "refs": ["saq-a-v4.0.1-r1", "faq-1588"],
+          "citations": [
+            {
+              "text": "The merchant has confirmed that their site is not susceptible to attacks from scripts that could affect the merchant's e-commerce system(s).",
+              "source": "saq-a-v4.0.1-r1",
+              "section": "Eligibility Criteria"
+            },
+            {
+              "text": "Note that the SAQ A eligibility criteria only applies to e-commerce merchants with a webpage that includes a TPSP's/payment processor's embedded payment page/form (for example, one or more inline frame(s) (iframes)).",
+              "source": "faq-1588",
+              "section": "FAQ 1588"
+            },
+            {
+              "text": "This eligibility criterion does not apply to e-commerce merchants with a webpage that redirects customers from the merchant's webpage to a TPSP/payment processor.",
+              "source": "faq-1588",
+              "section": "FAQ 1588"
+            }
+          ],
+          "links_to": ["truth-03", "knowledge-01", "evolution-01"],
+          "decision_map_node": "integration_type"
+        },
+        {
+          "id": "deep-02",
+          "title": "Multiple SAQs for multiple channels",
+          "body": "A single merchant entity may complete different SAQ types for different payment channels. For example: SAQ P2PE for in-store POS terminals using a validated P2PE solution, and SAQ A for e-commerce via redirect to a compliant TPSP. Each channel is assessed independently against its applicable eligibility criteria, and a separate AOC is completed for each. The merchant must ensure that cross-channel interactions do not expand the CDE of one channel into another.",
+          "refs": ["saq-instructions"],
+          "links_to": ["truth-04", "truth-05"]
+        },
+        {
+          "id": "deep-03",
+          "title": "When a simplified SAQ is impossible despite apparent eligibility",
+          "body": "SAQ D applies to merchants that formally appear to meet the criteria for a lighter SAQ but whose environment contains additional PCI DSS-applicable elements. Common scenarios include: a merchant outsourcing payment processing (apparently SAQ A) but retaining PANs in application logs, analytics databases, or customer support systems; a merchant using a virtual terminal (apparently SAQ C-VT) but on a device shared with general business use; or a merchant whose environment includes PCI DSS requirements not covered by the lighter SAQ.",
+          "refs": ["pci-dss-v4.0.1"],
+          "citations": [
+            {
+              "text": "SAQ D for Merchants applies to merchants that are eligible to complete a self-assessment questionnaire but do not meet the criteria for any other SAQ type. Examples include: merchants with environments that might meet the criteria of another SAQ type, but that have additional PCI DSS requirements applicable to their environment.",
+              "source": "pci-dss-v4.0.1",
+              "section": "SAQ D for Merchants, Eligibility Criteria"
+            }
+          ],
+          "links_to": ["truth-05", "service-01"],
+          "decision_map_node": "catch_all"
+        },
+        {
+          "id": "deep-04",
+          "title": "Electronic CHD storage as an automatic escalator",
+          "body": "Any electronic storage of cardholder data — whether encrypted, tokenized with reversible tokens, hashed with recoverable hashes, or in plaintext — immediately disqualifies a merchant from SAQ A, A-EP, B, B-IP, C-VT, C, P2PE, and SPoC. The only remaining option is SAQ D. Paper-only storage (receipts, printed reports) is handled separately within each SAQ's applicable requirements. The absence of storage does not by itself qualify for SAQ A; the integration architecture must also meet SAQ A criteria.",
+          "refs": ["pci-dss-v4.0.1", "saq-instructions"],
+          "links_to": ["truth-05", "service-01"],
+          "decision_map_node": "storage_check"
+        },
+        {
+          "id": "deep-05",
+          "title": "Full outsourcing vs. partial outsourcing",
+          "body": "The boundary between full and partial outsourcing determines the SAQ A / SAQ A-EP / SAQ D split for e-commerce. Full outsourcing means: no CHD is stored, processed, or transmitted on merchant systems; the merchant's website either redirects the customer to the TPSP or embeds the TPSP's payment page via iframe; and the TPSP is PCI DSS compliant. Partial outsourcing — where the merchant's server participates in the payment flow (e.g., receiving form data before forwarding, hosting its own payment page that sends data to the TPSP via API) — places the merchant in SAQ A-EP (if web server only) or SAQ D (if processing or storing CHD).",
+          "refs": ["saq-instructions"],
+          "links_to": ["deep-01", "deep-04"]
+        },
+        {
+          "id": "deep-06",
+          "title": "Network segmentation and SAQ scope",
+          "body": "Absence of network segmentation expands the CDE to the merchant's entire network, making it impossible to meet the isolation criteria required by simplified SAQs. PCI DSS v4.0.1 updated SAQ C eligibility criteria to remove references to segmentation, clarifying that SAQ C is intended only for standalone, isolated payment systems. For SAQ B-IP, the eligibility criteria specify standalone POI devices not connected to other device types in the same network zone. Effective segmentation is not merely a firewall — it must be validated through segmentation testing.",
+          "refs": ["pci-dss-v4.0.1"],
+          "citations": [
+            {
+              "text": "The eligibility criteria were updated to remove segmentation, to clarify that this SAQ is intended only for standalone computers.",
+              "source": "pci-dss-v4.0.1",
+              "section": "SAQ C v4.0 Changes"
+            }
+          ],
+          "links_to": ["truth-05"]
+        },
+        {
+          "id": "deep-07",
+          "title": "Level 1 merchants and SAQ non-applicability",
+          "body": "PCI SSC does not formally prohibit Level 1 merchants from using SAQs, but payment brand programs make SAQs de facto unavailable at this level. Visa and Mastercard both require Level 1 merchants (>6M annual transactions) to undergo an annual on-site assessment resulting in a ROC, conducted by a QSA or certified ISA. A merchant escalated to Level 1 due to a data breach is also subject to ROC requirements regardless of its normal transaction volume.",
+          "refs": ["visa-core-rules", "mastercard-sdp"],
+          "citations": [
+            {
+              "text": "Level 1 merchants are required to undergo an annual PCI DSS assessment resulting in the completion of a ROC conducted by a QSA or ISA.",
+              "source": "mastercard-sdp",
+              "section": "Validation Requirements"
+            }
+          ],
+          "links_to": ["truth-06", "connect-01"],
+          "decision_map_node": "level_check"
+        }
+      ]
+    },
+
+    "connect": {
+      "axis_label": "Ecosystem positioning",
+      "axis_purpose": "How SAQ applicability interacts with payment brand programs, acquirer obligations, and adjacent regulatory frameworks",
+      "fragments": [
+        {
+          "id": "connect-01",
+          "title": "Payment brand validation programs layered on PCI SSC framework",
+          "body": "Each payment brand maintains its own compliance validation program on top of PCI SSC's standard. Key differences for merchant SAQ applicability include: Mastercard requires Level 2 merchants completing SAQ A, SAQ A-EP, or SAQ D to engage a QSA or ISA for validation, but allows Level 2 merchants on SAQ B, B-IP, C-VT, C, or P2PE to self-assess without QSA/ISA involvement. Mastercard does not require Level 3/4 merchants to validate PCI compliance directly to Mastercard, delegating this to the acquirer. Visa, Discover, and JCB use slightly different level definitions; Discover and Visa effectively operate three merchant levels rather than four. A merchant accepting multiple card brands must satisfy the most stringent requirements across all applicable brand programs.",
+          "refs": ["mastercard-sdp", "visa-core-rules", "mastercard-spme"],
+          "citations": [
+            {
+              "text": "Level 2 merchants completing SAQ A, SAQ A-EP or SAQ D must additionally engage a PCI SSC-approved QSA or PCI SSC-certified ISA for compliance validation.",
+              "source": "mastercard-sdp",
+              "section": "Merchant Validation Requirements"
+            },
+            {
+              "text": "Level 2 merchants completing SAQ B, B-IP, C-VT, C or P2PE may now self-assess without the use of a QSA or ISA for compliance validation.",
+              "source": "mastercard-sdp",
+              "section": "Revised PCI DSS Compliance Requirements for L2 Merchants"
+            },
+            {
+              "text": "Mastercard does not require that Level 3 and Level 4 merchants validate PCI compliance. However, an acquirer must validate to Mastercard that they have a risk management program in place to identify and manage payment security risk within their Level 3 and Level 4 merchant portfolios.",
+              "source": "mastercard-sdp",
+              "section": "Level 3/4 Merchant Requirements"
+            }
+          ],
+          "links_to": ["truth-06", "connect-02", "knowledge-03"]
+        },
+        {
+          "id": "connect-02",
+          "title": "The acquirer as enforcement layer",
+          "body": "The acquirer serves as the primary compliance enforcement point for merchants. Acquirers are responsible for: ensuring merchants validate at the correct level, accepting and reviewing SAQ/ROC submissions, reporting merchant compliance status to payment brands, and escalating merchants to higher validation levels when warranted by risk, breach history, or non-compliance. The acquirer can require a merchant to complete a more rigorous SAQ type or a full ROC even if the merchant technically meets criteria for a lighter SAQ. Acquirer discretion in this area is not standardized — it varies by institution and risk appetite.",
+          "refs": ["visa-core-rules", "mastercard-spme"],
+          "citations": [
+            {
+              "text": "Acquirers are responsible for ensuring merchants validate at the correct level and provide the required compliance validation documentation.",
+              "source": "visa-core-rules",
+              "section": "Visa Cardholder Information Security Program"
+            }
+          ],
+          "links_to": ["truth-06", "responsibility-06"]
+        },
+        {
+          "id": "connect-03",
+          "title": "SAQ within the broader validation ecosystem",
+          "body": "The SAQ is one component of a multi-part validation framework. ASV scanning (quarterly external vulnerability scans per Requirement 11.3.2) is required for most SAQ types — exceptions include SAQ B (no internet-facing components). Penetration testing (Requirement 11.4) is not required for SAQ A, B, B-IP, C-VT, or P2PE, but is mandatory for SAQ C, SAQ A-EP, and SAQ D. The AOC (Attestation of Compliance) is the deliverable document — it is what the merchant provides to its acquirer, business partners, and payment brands. The SAQ itself is supporting evidence for the AOC.",
+          "refs": ["pci-dss-v4.0.1"],
+          "validation_matrix": [
+            {"saq": "SAQ A", "asv_scan": "recommended", "pentest": "no", "qsa_required": "no (except MC L2)"},
+            {"saq": "SAQ A-EP", "asv_scan": "required", "pentest": "required", "qsa_required": "no (except MC L2)"},
+            {"saq": "SAQ B", "asv_scan": "no", "pentest": "no", "qsa_required": "no"},
+            {"saq": "SAQ B-IP", "asv_scan": "required", "pentest": "no", "qsa_required": "no"},
+            {"saq": "SAQ C-VT", "asv_scan": "required", "pentest": "no", "qsa_required": "no"},
+            {"saq": "SAQ C", "asv_scan": "required", "pentest": "required", "qsa_required": "no"},
+            {"saq": "SAQ P2PE", "asv_scan": "no", "pentest": "no", "qsa_required": "no"},
+            {"saq": "SAQ D", "asv_scan": "required", "pentest": "required", "qsa_required": "no (except MC L2)"},
+            {"saq": "ROC", "asv_scan": "required", "pentest": "required", "qsa_required": "yes"}
+          ],
+          "links_to": ["truth-01", "connect-01"]
+        },
+        {
+          "id": "connect-04",
+          "title": "PCI DSS v3.2.1 to v4.0 to v4.0.1 transition impact on SAQs",
+          "body": "PCI DSS v3.2.1 retired on 31 March 2024. PCI DSS v4.0 introduced 64 new requirements, with 51 future-dated to 31 March 2025. v4.0.1, released June 2024, is a limited clarification revision with no new or deleted requirements. For SAQ A specifically, the January 2025 revision (SAQ A v4.0.1 r1) made a substantive change: Requirements 6.4.3, 11.6.1, and 12.3.1 were removed from the SAQ A questionnaire, but a new eligibility criterion was added requiring merchants to confirm their entire site's resistance to script-based attacks. This paradoxically reduces the number of assessed controls while raising the bar for eligibility.",
+          "refs": ["pci-dss-v4.0.1", "saq-a-v4.0.1-r1", "faq-1588"],
+          "citations": [
+            {
+              "text": "This limited revision does not impact the effective date for requirements that have been identified as future dated in v4.0. After March 31, 2025, these future-dated requirements go into effect and must be fully considered as part of a PCI DSS assessment.",
+              "source": "pci-dss-v4.0.1",
+              "section": "PCI DSS v4.0.1 FAQ"
+            }
+          ],
+          "version_comparison": {
+            "saq_a_v3.2.1": {
+              "total_requirements": 24,
+              "ecommerce_specific": 9,
+              "script_controls": "none"
+            },
+            "saq_a_v4.0": {
+              "total_requirements": 29,
+              "ecommerce_specific": 15,
+              "script_controls": "6.4.3, 11.6.1, 12.3.1 (future-dated to March 2025)"
+            },
+            "saq_a_v4.0.1_r1_jan2025": {
+              "total_requirements": 27,
+              "ecommerce_specific": 13,
+              "script_controls": "Removed from questionnaire; replaced by eligibility criterion for whole-site script protection"
+            }
+          },
+          "links_to": ["deep-01", "evolution-01", "knowledge-01"]
+        },
+        {
+          "id": "connect-05",
+          "title": "P2PE and tokenization as scope-reduction mechanisms",
+          "body": "PCI SSC-validated P2PE solutions encrypt CHD at the point of interaction, with decryption occurring only in the solution provider's secure environment. This eliminates the merchant's exposure to cleartext CHD, enabling SAQ P2PE — one of the shortest SAQ types. Tokenization replaces CHD with non-sensitive tokens; when implemented by a compliant TPSP, it enables the merchant to operate without CHD in its environment. Both mechanisms are architectural tools for CDE minimization, and PCI DSS effectively 'rewards' their adoption with reduced compliance scope.",
+          "refs": ["pci-dss-v4.0.1"],
+          "links_to": ["truth-05", "evolution-03"]
+        },
+        {
+          "id": "connect-06",
+          "title": "Intersection with adjacent regulatory frameworks",
+          "body": "PCI DSS is a contractual obligation, not a statute, but it intersects with data protection laws. Under GDPR, cardholder data constitutes personal data, meaning a PCI DSS breach often simultaneously constitutes a GDPR breach. Several US states (Nevada, Minnesota, Washington) have enacted laws referencing PCI DSS or imposing equivalent requirements. In the UK, the FCA's approach to payment services regulation and the forthcoming PSR-FCA merger may create additional oversight for payment security beyond PCI DSS. Merchants operating across jurisdictions must satisfy all applicable regimes, with PCI DSS forming the payment-specific security baseline and GDPR/local laws addressing broader data protection obligations.",
+          "refs": ["pci-dss-v4.0.1"],
+          "links_to": ["responsibility-04"]
+        }
+      ]
+    },
+
+    "service": {
+      "axis_label": "Practical applicability answer",
+      "axis_purpose": "The synthesized answer to the core question of SAQ applicability",
+      "fragments": [
+        {
+          "id": "service-01",
+          "title": "Four-axis model for SAQ determination",
+          "body": "SAQ applicability for a given merchant is determined by the intersection of four axes: (1) Payment channel — e-commerce, MOTO, card-present, or combination; each channel assessed independently. (2) CHD interaction architecture — full outsourcing (redirect/iframe → SAQ A path), own ingestion page (SAQ A-EP path), virtual terminal (SAQ C-VT path), connected terminal (SAQ C/B-IP/B path), P2PE (SAQ P2PE path), or direct processing/storage (SAQ D). (3) Data storage posture — any electronic CHD storage immediately escalates to SAQ D; paper-only storage is permissible within lighter SAQs. (4) External constraints — merchant level (Level 1 → ROC mandatory), payment brand program requirements, and acquirer discretion. The merchant selects the lightest SAQ whose eligibility criteria are fully met, proceeding from SAQ A toward SAQ D. If no simplified type fits, SAQ D is the default.",
+          "refs": ["saq-instructions", "pci-dss-v4.0.1"],
+          "links_to": ["truth-03", "truth-04", "deep-04", "deep-07"],
+          "is_primary_answer": true
+        }
+      ]
+    },
+
+    "knowledge": {
+      "axis_label": "Critical findings",
+      "axis_purpose": "Key insights with normative backing that a practitioner must internalize",
+      "fragments": [
+        {
+          "id": "knowledge-01",
+          "title": "SAQ A post-v4.0.1 r1 is not simply 'we have an iframe'",
+          "body": "The January 2025 SAQ A revision created a paradox: fewer controls to assess (~24 vs ~29 in v4.0) but a higher bar for eligibility. The new eligibility criterion — confirming the entire merchant site's resistance to script attacks per FAQ 1588 — means that many merchants previously comfortable with SAQ A now face a binary choice: demonstrate whole-site script protection (and stay on SAQ A), or fall to SAQ A-EP with ~140 requirements. This is a 5x+ increase in control count and includes penetration testing, vulnerability scanning, and change management requirements not present in SAQ A.",
+          "refs": ["saq-a-v4.0.1-r1", "faq-1588"],
+          "citations": [
+            {
+              "text": "SAQ A-EP contains approximately 140 PCI DSS requirements, while SAQ A includes only about 24. A merchant incorrectly using SAQ A might fail to implement over 100 security controls.",
+              "source": "saq-a-v4.0.1-r1",
+              "section": "Eligibility Analysis"
+            }
+          ],
+          "severity": "critical",
+          "links_to": ["deep-01", "evolution-01"]
+        },
+        {
+          "id": "knowledge-02",
+          "title": "The SAQ A → SAQ A-EP gap is the most consequential boundary in e-commerce",
+          "body": "The jump from SAQ A to SAQ A-EP is not incremental — it is a category change. SAQ A-EP brings the merchant's web server fully into scope, requiring compliance with requirements across network security (Req 1-2), secure configurations (Req 2), vulnerability management (Req 5-6), access control (Req 7-8), monitoring (Req 10), security testing including penetration testing (Req 11), and comprehensive security policies (Req 12). For a merchant accustomed to SAQ A's ~24 controls, the operational and financial burden of SAQ A-EP can be transformative.",
+          "refs": ["pci-dss-v4.0.1"],
+          "severity": "high",
+          "links_to": ["deep-01", "knowledge-01"]
+        },
+        {
+          "id": "knowledge-03",
+          "title": "Mastercard Level 2 QSA/ISA requirement creates cross-brand asymmetry",
+          "body": "Mastercard requires Level 2 merchants completing SAQ A, SAQ A-EP, or SAQ D to engage a QSA or ISA for compliance validation. Visa does not impose this requirement for Level 2 merchants. A merchant accepting both Visa and Mastercard at Level 2 must meet Mastercard's stricter requirement. This creates a compliance cost asymmetry where the brand with the strictest program dictates the merchant's actual validation process.",
+          "refs": ["mastercard-sdp"],
+          "severity": "medium",
+          "links_to": ["connect-01"]
+        },
+        {
+          "id": "knowledge-04",
+          "title": "Customized Approach is theoretically available but practically infeasible for most SAQ merchants",
+          "body": "PCI DSS v4.0 introduced the Customized Approach, allowing organizations to meet requirement objectives through alternative controls. However, this approach requires extensive documentation, a mature security program, and typically QSA involvement — characteristics rarely found in SAQ-eligible merchant environments. The Customized Approach is more relevant to large, sophisticated organizations undergoing ROC assessments.",
+          "refs": ["pci-dss-v4.0.1"],
+          "severity": "low",
+          "links_to": ["connect-04"]
+        },
+        {
+          "id": "knowledge-05",
+          "title": "Full outsourcing reduces scope but never eliminates PCI DSS obligations",
+          "body": "Even a merchant that outsources 100% of payment processing to a compliant TPSP retains PCI DSS obligations: Requirement 12.8 (third-party service provider management) always applies, requiring written agreements, due diligence, compliance monitoring, and a responsibility matrix. The merchant must also confirm the TPSP's ongoing compliance status. 'We don't touch card data' does not equal 'PCI DSS does not apply to us.'",
+          "refs": ["pci-dss-v4.0.1"],
+          "citations": [
+            {
+              "text": "Requirement 12.8 applies to all entities in this list.",
+              "source": "pci-dss-v4.0.1",
+              "section": "SAQ A, Section 1: AOC"
+            }
+          ],
+          "severity": "high",
+          "links_to": ["deep-05", "truth-02"]
+        }
+      ]
+    },
+
+    "evolution": {
+      "axis_label": "Cause and effect",
+      "axis_purpose": "How changes in threats, technology, and regulation drive changes in SAQ applicability",
+      "fragments": [
+        {
+          "id": "evolution-01",
+          "title": "E-commerce skimming drove the SAQ A transformation",
+          "body": "The rise of Magecart-style attacks (injecting malicious JavaScript into merchant checkout pages to exfiltrate CHD) demonstrated that a merchant's website is a viable attack vector even when the merchant never directly processes CHD. This drove PCI SSC to introduce Requirements 6.4.3 and 11.6.1 in v4.0 (as best practices, becoming mandatory March 2025). The subsequent SAQ A v4.0.1 r1 revision moved these from assessed controls to an eligibility criterion — a stronger enforcement model because failure to meet the criterion changes the SAQ type entirely rather than appearing as a single 'Not in Place' finding.",
+          "refs": ["pci-dss-v4.0.1", "saq-a-v4.0.1-r1"],
+          "cause": "Growth of JavaScript-based e-commerce skimming (Magecart, formjacking)",
+          "effect": "Standard evolved from 'merchant doesn't touch data → merchant is safe' to 'merchant doesn't touch data but their site can be an attack vector → merchant must prove site security'",
+          "links_to": ["knowledge-01", "deep-01"]
+        },
+        {
+          "id": "evolution-02",
+          "title": "Payment brand program divergence reflects differing risk appetites",
+          "body": "The existence of different validation requirements across payment brands (Mastercard's QSA/ISA requirement for Level 2, Visa's TIP program, differing level definitions) is a consequence of brands independently assessing fraud exposure and operational risk in their networks. This divergence forces acquirers and merchants to track multiple compliance matrices, adding operational complexity that PCI SSC's unified standard was originally intended to simplify.",
+          "refs": ["mastercard-sdp", "visa-core-rules"],
+          "cause": "Independent risk assessment by payment brands with different merchant portfolios and fraud profiles",
+          "effect": "Merchants must satisfy the most stringent brand program, creating a 'highest common denominator' effect",
+          "links_to": ["connect-01", "knowledge-03"]
+        },
+        {
+          "id": "evolution-03",
+          "title": "Technology-driven scope reduction is incentivized by lighter SAQs",
+          "body": "The SAQ hierarchy creates a direct incentive for merchants to adopt technologies (P2PE, tokenization, hosted payment pages, redirect integration) that minimize their CDE. The compliance cost savings from dropping from SAQ D (~300 requirements) to SAQ A (~24 requirements) can far exceed the cost of implementing the scope-reducing technology. This feedback loop drives the payment ecosystem toward architectures where merchants never see cleartext CHD.",
+          "refs": ["pci-dss-v4.0.1"],
+          "cause": "Availability of P2PE, tokenization, and TPSP-hosted payment solutions",
+          "effect": "Merchants adopt scope-minimizing architectures → lighter SAQ → lower compliance cost → further adoption",
+          "links_to": ["connect-05", "truth-03"]
+        }
+      ]
+    },
+
+    "responsibility": {
+      "axis_label": "Accountability and uncertainty",
+      "axis_purpose": "Clear responsibility assignments and zones of ambiguity that practitioners must navigate",
+      "fragments": [
+        {
+          "id": "responsibility-01",
+          "title": "Merchant responsibility: CDE definition, SAQ selection, and self-assessment integrity",
+          "body": "The merchant is responsible for accurately defining its CDE boundaries, selecting the correct SAQ type based on eligibility criteria, and ensuring the truthfulness of all self-assessment responses. Incorrectly selecting a lighter SAQ is not merely an administrative error — it results in missing security controls and potential exposure to breach liability.",
+          "refs": ["saq-instructions"],
+          "links_to": ["truth-05", "truth-06"]
+        },
+        {
+          "id": "responsibility-02",
+          "title": "Acquirer responsibility: validation oversight and portfolio risk management",
+          "body": "The acquirer is responsible for ensuring that merchants validate at the correct level, reviewing and accepting compliance documentation, reporting compliance status to payment brands, and maintaining a risk management program for its merchant portfolio. For Level 3/4 merchants, where brands do not require direct validation, the acquirer bears primary responsibility for determining appropriate validation requirements.",
+          "refs": ["mastercard-sdp", "visa-core-rules"],
+          "links_to": ["connect-02", "truth-06"]
+        },
+        {
+          "id": "responsibility-03",
+          "title": "TPSP responsibility: maintaining compliance and providing evidence",
+          "body": "TPSPs are responsible for maintaining their own PCI DSS compliance, providing current AOC documentation to merchant customers, clearly defining the responsibility matrix (which PCI DSS requirements the TPSP covers vs. the merchant), and — under the new SAQ A criteria — providing confirmation that their embedded payment solutions protect against script-based attacks when implemented per the TPSP's instructions.",
+          "refs": ["pci-dss-v4.0.1", "faq-1588"],
+          "links_to": ["deep-01", "deep-05"]
+        },
+        {
+          "id": "responsibility-04",
+          "title": "Uncertainty zone: 'not susceptible to script attacks' — no defined minimum threshold",
+          "body": "The SAQ A v4.0.1 r1 eligibility criterion and FAQ 1588 provide examples of protective techniques (CSP, SRI, script monitoring, TPSP confirmation) but do not define a minimum acceptable threshold. This creates interpretive ambiguity: a merchant and QSA must exercise judgment about what constitutes sufficient protection. Different QSAs and acquirers may reach different conclusions for identical merchant environments. This ambiguity is expected to narrow over time as industry practice solidifies.",
+          "refs": ["faq-1588", "saq-a-v4.0.1-r1"],
+          "uncertainty_level": "high",
+          "links_to": ["deep-01", "knowledge-01"]
+        },
+        {
+          "id": "responsibility-05",
+          "title": "Uncertainty zone: SPA and hybrid architectures",
+          "body": "Modern web architectures — single-page applications (SPAs), dynamic client-side routing, server-side rendering with hydration, micro-frontends — create integration patterns that do not map cleanly to the traditional redirect/iframe dichotomy. A SPA that dynamically loads a TPSP's payment component may share JavaScript execution context in ways that neither 'redirect' nor 'iframe' accurately describes. PCI SSC has not yet provided specific guidance for these architectures, leaving merchants and assessors to interpret the existing framework on a case-by-case basis.",
+          "refs": ["pci-dss-v4.0.1"],
+          "uncertainty_level": "high",
+          "links_to": ["deep-01", "deep-05"]
+        },
+        {
+          "id": "responsibility-06",
+          "title": "Uncertainty zone: acquirer discretion in SAQ escalation",
+          "body": "The acquirer has the authority to require a merchant to complete a more stringent SAQ type or a full ROC, even when the merchant technically meets the eligibility criteria for a lighter SAQ. The criteria for this escalation are not standardized across acquirers — they may be triggered by breach history, industry risk, transaction patterns, or internal risk policy. Merchants should proactively discuss SAQ selection with their acquirer before beginning the assessment process.",
+          "refs": ["visa-core-rules", "mastercard-sdp"],
+          "uncertainty_level": "medium",
+          "links_to": ["truth-06", "connect-02"]
+        }
+      ]
+    }
+  },
+
+  "decision_map": {
+    "title": "E-Commerce Merchant SAQ Applicability Decision Tree",
+    "description": "Interactive decision tree for determining the applicable SAQ type for e-commerce merchants under PCI DSS v4.0.1",
+    "version": "PCI DSS v4.0.1 (effective 31 March 2025)",
+    "disclaimer": "This decision tree is guidance only. Final SAQ determination must be validated by the merchant's acquirer in accordance with applicable payment brand programs.",
+    "entry_point": "step_01",
+    "steps": [
+      {
+        "id": "step_01",
+        "question": "What is the merchant's annual card transaction volume?",
+        "context": "Volume thresholds are defined by individual payment brands. Visa and Mastercard both set Level 1 at >6M transactions. Volume is counted across all channels, not just e-commerce.",
+        "ref": "Visa Core Rules; Mastercard SDP Program",
+        "fragment_links": ["deep-07", "connect-01"],
+        "options": [
+          {
+            "value": "level_1",
+            "label": "> 6 million transactions/year",
+            "description": "Level 1 merchant — ROC is mandatory",
+            "next": "outcome_roc"
+          },
+          {
+            "value": "level_2",
+            "label": "1–6 million transactions/year",
+            "description": "Level 2 merchant",
+            "next": "step_02"
+          },
+          {
+            "value": "level_3",
+            "label": "20,000–1 million e-commerce transactions/year",
+            "description": "Level 3 merchant (e-commerce specific)",
+            "next": "step_02"
+          },
+          {
+            "value": "level_4",
+            "label": "< 20,000 e-commerce transactions/year",
+            "description": "Level 4 merchant",
+            "next": "step_02"
+          }
+        ]
+      },
+      {
+        "id": "step_02",
+        "question": "Does the merchant store cardholder data electronically?",
+        "context": "Electronic storage includes: databases, application logs containing PAN, files, caches, backups, encrypted storage with merchant-held keys, or any digital medium. Paper-only storage (receipts, printed reports) does not trigger this criterion.",
+        "ref": "PCI DSS v4.0.1, Requirement 3; SAQ D Eligibility Criteria",
+        "fragment_links": ["deep-04"],
+        "options": [
+          {
+            "value": "electronic_storage",
+            "label": "Yes — electronic storage of CHD exists",
+            "description": "PAN, track data, CVV, or other CHD stored in any electronic form",
+            "next": "outcome_saq_d"
+          },
+          {
+            "value": "paper_only",
+            "label": "Paper records only (receipts, printed reports)",
+            "description": "No electronic storage of CHD",
+            "next": "step_03"
+          },
+          {
+            "value": "no_storage",
+            "label": "No cardholder data stored at all",
+            "description": "Neither electronic nor paper",
+            "next": "step_03"
+          }
+        ]
+      },
+      {
+        "id": "step_03",
+        "question": "Does the merchant's server directly receive or process cardholder data?",
+        "context": "If the merchant hosts its own payment form where cardholders enter their data, or if the merchant's server receives CHD before forwarding it to a processor (even momentarily), the server is in scope for PCI DSS.",
+        "ref": "PCI DSS v4.0.1, Section 4 (Scope); SAQ A-EP Eligibility Criteria",
+        "fragment_links": ["deep-05", "truth-05"],
+        "options": [
+          {
+            "value": "own_page",
+            "label": "Yes — merchant server handles CHD",
+            "description": "Own payment page, API-based forwarding, or server-side processing",
+            "next": "outcome_saq_aep_or_d"
+          },
+          {
+            "value": "no_processing",
+            "label": "No — all CHD processing outsourced to TPSP",
+            "description": "Customer enters data on TPSP's page (via redirect or iframe)",
+            "next": "step_04"
+          }
+        ]
+      },
+      {
+        "id": "step_04",
+        "question": "Is the TPSP PCI DSS compliant with a current AOC?",
+        "context": "The merchant must maintain evidence of the TPSP's PCI DSS compliance status. This includes obtaining a current AOC, confirming the TPSP's PCI DSS compliance at least annually, and maintaining a responsibility matrix per Requirement 12.8.",
+        "ref": "PCI DSS v4.0.1, Requirement 12.8; SAQ A Eligibility Criteria",
+        "fragment_links": ["knowledge-05", "responsibility-03"],
+        "options": [
+          {
+            "value": "tpsp_compliant",
+            "label": "Yes — TPSP has current PCI DSS AOC",
+            "description": "Compliance confirmed and documented",
+            "next": "step_05"
+          },
+          {
+            "value": "tpsp_unknown",
+            "label": "No / Unknown / AOC expired",
+            "description": "Cannot confirm TPSP's PCI DSS compliance",
+            "next": "outcome_saq_d"
+          }
+        ]
+      },
+      {
+        "id": "step_05",
+        "question": "How does the merchant integrate the TPSP's payment page?",
+        "context": "The integration method determines whether the merchant's website participates in the payment page delivery. Redirect means the customer's browser navigates entirely to the TPSP's domain. Iframe means the TPSP's payment form is embedded within the merchant's page, creating a shared browser context.",
+        "ref": "FAQ 1588; SAQ A v4.0.1 r1 Eligibility Criteria",
+        "fragment_links": ["deep-01", "responsibility-05"],
+        "options": [
+          {
+            "value": "redirect",
+            "label": "Full redirect to TPSP domain",
+            "description": "Customer leaves merchant site entirely for payment entry",
+            "next": "outcome_saq_a_redirect"
+          },
+          {
+            "value": "iframe",
+            "label": "Iframe / embedded payment form",
+            "description": "TPSP payment form embedded within merchant's page",
+            "next": "step_06"
+          }
+        ]
+      },
+      {
+        "id": "step_06",
+        "question": "Can the merchant confirm that its entire site is protected against script-based attacks?",
+        "context": "Per FAQ 1588, the merchant can confirm protection either by: (a) implementing techniques such as those defined in PCI DSS Requirements 6.4.3 and 11.6.1 (CSP, SRI, script monitoring), or (b) obtaining confirmation from the TPSP that their embedded solution includes script protections when implemented per the TPSP's instructions. The protection scope is the entire merchant website, not just the payment page.",
+        "ref": "FAQ 1588; SAQ A v4.0.1 r1 Eligibility Criteria",
+        "fragment_links": ["deep-01", "responsibility-04", "knowledge-01"],
+        "options": [
+          {
+            "value": "protected",
+            "label": "Yes — script protection confirmed",
+            "description": "Via own implementation (CSP/SRI/monitoring) or TPSP confirmation",
+            "next": "outcome_saq_a_iframe"
+          },
+          {
+            "value": "not_protected",
+            "label": "No — cannot confirm script protection",
+            "description": "No protective measures in place or no TPSP confirmation obtained",
+            "next": "outcome_saq_aep"
+          }
+        ]
+      }
+    ],
+    "outcomes": [
+      {
+        "id": "outcome_roc",
+        "result_type": "ROC",
+        "title": "Report on Compliance (ROC)",
+        "summary": "Level 1 merchants must undergo an annual on-site PCI DSS assessment by a QSA or ISA, resulting in a ROC. SAQ is not an acceptable validation method.",
+        "approximate_controls": "All applicable PCI DSS requirements (~300+)",
+        "required_documents": [
+          "Annual ROC by QSA or ISA",
+          "AOC (ROC version)",
+          "Quarterly ASV scan reports",
+          "Annual penetration test report"
+        ],
+        "additional_notes": [
+          "Merchants escalated to Level 1 due to a data breach are also subject to ROC",
+          "Some payment brands may accept an ISA-led ROC in lieu of QSA for Level 1"
+        ],
+        "fragment_links": ["deep-07", "connect-01"]
+      },
+      {
+        "id": "outcome_saq_d",
+        "result_type": "SAQ D",
+        "title": "Self-Assessment Questionnaire D for Merchants",
+        "summary": "The most comprehensive SAQ, covering the full spectrum of PCI DSS requirements. Applies when no simplified SAQ type fits the merchant's environment.",
+        "approximate_controls": "~300+ requirements",
+        "required_documents": [
+          "SAQ D for Merchants",
+          "AOC (SAQ D version)",
+          "Quarterly ASV scan reports",
+          "Annual penetration test report"
+        ],
+        "additional_notes": [
+          "Mastercard Level 2 merchants on SAQ D must engage QSA or ISA",
+          "Electronic CHD storage is the most common reason for SAQ D classification",
+          "Merchants should evaluate whether architectural changes (tokenization, P2PE, redirect integration) could enable a lighter SAQ"
+        ],
+        "fragment_links": ["deep-03", "deep-04", "evolution-03"]
+      },
+      {
+        "id": "outcome_saq_aep_or_d",
+        "result_type": "SAQ A-EP or SAQ D",
+        "title": "SAQ A-EP or SAQ D for Merchants",
+        "summary": "If the merchant's web server participates in CHD flow but does not store CHD, SAQ A-EP likely applies. If CHD is also stored or the environment has additional in-scope elements, SAQ D applies. A detailed scope analysis is required.",
+        "approximate_controls": "~140 (SAQ A-EP) to ~300+ (SAQ D)",
+        "required_documents": [
+          "SAQ A-EP or SAQ D for Merchants",
+          "Corresponding AOC",
+          "Quarterly ASV scan reports",
+          "Annual penetration test report"
+        ],
+        "additional_notes": [
+          "SAQ A-EP requires compliance with Requirements 6.4.3 and 11.6.1 for script protection",
+          "Mastercard Level 2 merchants on SAQ A-EP must engage QSA or ISA",
+          "Consider architectural migration to redirect/iframe to reduce to SAQ A"
+        ],
+        "fragment_links": ["deep-05", "knowledge-02"]
+      },
+      {
+        "id": "outcome_saq_a_redirect",
+        "result_type": "SAQ A",
+        "title": "Self-Assessment Questionnaire A (via redirect)",
+        "summary": "The merchant qualifies for SAQ A with the lightest compliance burden. Full redirect integration exempts the merchant from the script-protection eligibility criterion. The merchant's website does not participate in the payment data flow.",
+        "approximate_controls": "~24 requirements",
+        "required_documents": [
+          "SAQ A",
+          "AOC (SAQ A version)",
+          "Quarterly ASV scan (recommended, may be required by acquirer)"
+        ],
+        "additional_notes": [
+          "Script protection eligibility criterion does NOT apply to redirect merchants (per FAQ 1588)",
+          "Requirement 12.8 (TPSP management) always applies",
+          "Mastercard Level 2 merchants on SAQ A must engage QSA or ISA",
+          "Acquirer may still require additional validation measures"
+        ],
+        "fragment_links": ["deep-01", "knowledge-05"]
+      },
+      {
+        "id": "outcome_saq_a_iframe",
+        "result_type": "SAQ A",
+        "title": "Self-Assessment Questionnaire A (via iframe with script protection)",
+        "summary": "The merchant qualifies for SAQ A but must maintain confirmed protection against script-based attacks across the entire site. This is an ongoing obligation — loss of script protection reverts the merchant to SAQ A-EP eligibility.",
+        "approximate_controls": "~24 requirements",
+        "required_documents": [
+          "SAQ A",
+          "AOC (SAQ A version)",
+          "Evidence of script protection (CSP policy, SRI implementation, or TPSP confirmation letter)",
+          "Quarterly ASV scan (recommended, may be required by acquirer)"
+        ],
+        "additional_notes": [
+          "Protection must cover the ENTIRE merchant website, not just payment pages",
+          "TPSP confirmation must specify that the solution protects against script attacks when implemented per instructions",
+          "Mastercard Level 2 merchants on SAQ A must engage QSA or ISA",
+          "If script protection cannot be maintained, merchant falls to SAQ A-EP (~140 requirements)"
+        ],
+        "fragment_links": ["deep-01", "knowledge-01", "responsibility-04"]
+      },
+      {
+        "id": "outcome_saq_aep",
+        "result_type": "SAQ A-EP",
+        "title": "Self-Assessment Questionnaire A-EP",
+        "summary": "The merchant's web server is in scope because it delivers the page containing the TPSP's iframe but cannot confirm script-based attack protection. The merchant must comply with web application security, vulnerability management, and script monitoring requirements.",
+        "approximate_controls": "~140 requirements",
+        "required_documents": [
+          "SAQ A-EP",
+          "AOC (SAQ A-EP version)",
+          "Quarterly ASV scan reports",
+          "Annual penetration test report"
+        ],
+        "additional_notes": [
+          "Requirements 6.4.3 and 11.6.1 remain mandatory for SAQ A-EP merchants",
+          "Mastercard Level 2 merchants on SAQ A-EP must engage QSA or ISA",
+          "Consider implementing script protections to qualify for SAQ A and reduce from ~140 to ~24 requirements"
+        ],
+        "fragment_links": ["knowledge-01", "knowledge-02", "evolution-01"]
+      }
+    ],
+    "overlay_rules": [
+      {
+        "id": "overlay_mc_l2_qsa",
+        "applies_when": "Merchant is Mastercard Level 2 AND completing SAQ A, SAQ A-EP, or SAQ D",
+        "requirement": "Must engage PCI SSC-approved QSA or PCI SSC-certified ISA for compliance validation",
+        "ref": "Mastercard SDP Program, Revised PCI DSS Compliance Requirements for L2 Merchants",
+        "fragment_links": ["connect-01", "knowledge-03"]
+      },
+      {
+        "id": "overlay_acquirer_escalation",
+        "applies_when": "Acquirer determines elevated risk based on breach history, transaction patterns, or internal risk policy",
+        "requirement": "Acquirer may require a more stringent SAQ type or full ROC regardless of merchant's technical eligibility for a lighter SAQ",
+        "ref": "Visa Core Rules; Mastercard SPME",
+        "fragment_links": ["connect-02", "responsibility-06"]
+      },
+      {
+        "id": "overlay_breach_escalation",
+        "applies_when": "Merchant has experienced a cardholder data breach or account data compromise",
+        "requirement": "Payment brands may escalate the merchant to Level 1 status, requiring ROC regardless of transaction volume",
+        "ref": "Visa Core Rules; Mastercard SDP Program",
+        "fragment_links": ["deep-07"]
+      },
+      {
+        "id": "overlay_asv_scan",
+        "applies_when": "Any SAQ type with internet-facing infrastructure in scope",
+        "requirement": "Quarterly external vulnerability scan by an Approved Scanning Vendor (ASV) per Requirement 11.3.2",
+        "ref": "PCI DSS v4.0.1, Requirement 11.3.2",
+        "fragment_links": ["connect-03"]
+      }
+    ]
+  },
+
+  "cross_reference_index": {
+    "by_saq_type": {
+      "SAQ A": ["truth-03", "deep-01", "deep-05", "connect-04", "knowledge-01", "knowledge-02", "knowledge-05", "evolution-01", "responsibility-04"],
+      "SAQ A-EP": ["truth-03", "deep-01", "deep-05", "connect-03", "knowledge-01", "knowledge-02", "evolution-01"],
+      "SAQ B": ["truth-03"],
+      "SAQ B-IP": ["truth-03", "deep-06"],
+      "SAQ C-VT": ["truth-03"],
+      "SAQ C": ["truth-03", "deep-06", "connect-03"],
+      "SAQ P2PE": ["truth-03", "connect-05", "evolution-03"],
+      "SAQ D": ["truth-03", "deep-03", "deep-04", "connect-03"],
+      "ROC": ["truth-01", "deep-07", "connect-01"]
+    },
+    "by_topic": {
+      "iframe_vs_redirect": ["deep-01", "knowledge-01", "responsibility-04", "responsibility-05", "evolution-01"],
+      "merchant_levels": ["deep-07", "connect-01", "knowledge-03"],
+      "acquirer_role": ["truth-06", "connect-02", "responsibility-02", "responsibility-06"],
+      "tpsp_management": ["deep-05", "knowledge-05", "responsibility-03"],
+      "script_protection": ["deep-01", "knowledge-01", "responsibility-04", "evolution-01", "connect-04"],
+      "scope_reduction": ["truth-05", "deep-06", "connect-05", "evolution-03"],
+      "v4_transition": ["connect-04", "evolution-01"],
+      "payment_brand_programs": ["connect-01", "knowledge-03", "evolution-02"],
+      "regulatory_intersection": ["connect-06", "responsibility-04"]
+    },
+    "by_pci_dss_requirement": {
+      "Req 6.4.3": ["deep-01", "connect-04", "knowledge-01", "evolution-01"],
+      "Req 11.6.1": ["deep-01", "connect-04", "knowledge-01", "evolution-01"],
+      "Req 12.3.1": ["connect-04"],
+      "Req 12.8": ["knowledge-05", "responsibility-03"],
+      "Req 11.3.2": ["connect-03"],
+      "Req 11.4": ["connect-03"]
+    }
+  }
+}
